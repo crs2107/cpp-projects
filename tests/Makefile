@@ -45,3 +45,8 @@ target: $(OBJECTS)
 
 clean:
 	rm -rf $(TARGET) $(OBJECTS)
+
+clean_all: clean
+	for p in $(SUB_DIR) ; do\
+		$(MAKE) -C $$p clean ; \
+	done
