@@ -1,0 +1,2 @@
+SocName t512505
+TotalModules 32
