@@ -6,7 +6,6 @@
 Tokenizer::Tokenizer(const char* file_name , const char* delimeters) :
     _delimeters(delimeters),
     _next_ptr(_buffer),
-    _is_swap_happened(false),
     _is_file_ended(false),
     _end_of_buffer_ptr(0)
 {
@@ -27,7 +26,7 @@ Tokenizer::~Tokenizer()
 const char*
 Tokenizer::GetToken()
 {
-    char *_tok_head ; //points to the first character of each token
+    uint64_t tok_size = 0 ; //points to the first character of each token
 
     if(_next_ptr > _end_of_buffer_ptr && !_is_file_ended)
     {
@@ -40,26 +39,22 @@ Tokenizer::GetToken()
     }
 
 
-    if(_is_swap_happened == true)
-    {
-        *_next_ptr = _temp ;
-    }
-
-    _tok_head = _next_ptr ;
-
+   
     if(strchr(_delimeters , *_next_ptr) != NULL) 
     {
+        _token[tok_size] = *_next_ptr ;
+        tok_size ++ ;
         _next_ptr++ ;
-        _temp = *_next_ptr ;
-        _is_swap_happened = true ;
-        *_next_ptr = '\0';
-        return _tok_head ;
+        _token[tok_size] = '\0' ;
+        return _token ;
     }
 
 
-    while(strchr(_delimeters , *_next_ptr) == NULL )
+    while(strchr(_delimeters , *_next_ptr) == NULL && tok_size <= TOK_SIZE)
     {
         assert(_next_ptr <= _end_of_buffer_ptr) ;
+        _token[tok_size] = *_next_ptr ;
+        tok_size++ ;
         _next_ptr++ ;
         if (_next_ptr > _end_of_buffer_ptr) {
             if (_is_file_ended) break ;
@@ -67,11 +62,10 @@ Tokenizer::GetToken()
         }
     }
 
-    _temp = *_next_ptr ;
-    _is_swap_happened = true ;
-    *_next_ptr = '\0' ;
+    _token[tok_size] = '\0' ;
+
     
-    return _tok_head ;
+    return _token ;
 }
 
 
